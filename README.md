@@ -81,77 +81,6 @@
       line-height: 1.5;
     }
 
-    .nprs-card {
-      background: var(--card-bg);
-      border-radius: 16px;
-      padding: 18px 14px;
-      margin-bottom: 14px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-      border: 1.5px solid var(--border);
-    }
-
-    .nprs-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 8px;
-    }
-
-    .nprs-badge {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: var(--primary);
-    }
-
-    .slider-container {
-      margin: 20px 0 10px 0;
-    }
-
-    .nprs-slider {
-      -webkit-appearance: none;
-      width: 100%;
-      height: 10px;
-      border-radius: 5px;
-      background: linear-gradient(to right, #34C759 0%, #FFCC00 50%, #FF3B30 100%);
-      outline: none;
-      cursor: pointer;
-    }
-
-    .nprs-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #FFFFFF;
-      border: 3px solid var(--primary);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      cursor: pointer;
-      transition: transform 0.1s;
-    }
-
-    .nprs-slider::-webkit-slider-thumb:active {
-      transform: scale(1.15);
-    }
-
-    .slider-labels {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-      font-size: 0.95rem;
-      font-weight: 700;
-    }
-
-    .label-left {
-      color: #28A745;
-      text-align: left;
-    }
-
-    .label-right {
-      color: #DC3545;
-      text-align: right;
-    }
-
     .question-card {
       background: var(--card-bg);
       border-radius: 16px;
@@ -367,23 +296,6 @@
   </div>
 
   <form id="evaluationForm">
-    <div class="nprs-card" id="nprsCard" style="display: none;">
-      <div class="nprs-header">
-        <span class="question-title" style="margin-bottom: 0;">Numeric Pain Rating Scale (NPRS)</span>
-        <span id="nprsValueDisplay" class="nprs-badge">0 / 10</span>
-      </div>
-      <p style="font-size: 0.95rem; color: var(--text-muted); margin: 4px 0 14px 0;">Please slide to select your current level of pain:</p>
-      
-      <div class="slider-container">
-        <input type="range" min="0" max="10" value="0" step="1" class="nprs-slider" id="nprsSlider" oninput="updateNprs(this.value)">
-      </div>
-      
-      <div class="slider-labels">
-        <span class="label-left">0<br>No Pain</span>
-        <span class="label-right">10<br>Worst Imaginable Pain</span>
-      </div>
-    </div>
-
     <div id="questionsContainer"></div>
     
     <button type="button" class="calc-btn" onclick="submitAssessment()">Calculate Assessment Result</button>
@@ -393,11 +305,6 @@
 <div id="scoreModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" onclick="handleBackdropClick(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
     <h2 id="modalTitle">Assessment Result</h2>
-    
-    <div class="result-block" id="nprsResultBlock" style="display: none;">
-      <p class="result-label">Pain Level (NPRS)</p>
-      <p id="modalNprsText" class="result-val">0 / 10</p>
-    </div>
 
     <div class="result-block">
       <p class="result-label" id="modalScoreTitle">STarT Back Screening Tool</p>
@@ -434,7 +341,6 @@ const CONFIG = {
   hospitalTitle: "Hospital Authority Pamela Youde Nethersole Eastern Hospital\nPhysiotherapy Department",
   title: "STarT Back Screening Tool",
   instruction: "Thinking about the <strong>last 2 weeks</strong>, select your response to the following questions:",
-  enableNprs: true,
   items: [
     { title: "My back pain has spread down my leg(s) at some time in the last 2 weeks", options: binaryOptions },
     { title: "I have had pain in the shoulder or neck at some time in the last 2 weeks", options: binaryOptions },
@@ -462,11 +368,6 @@ function initQuestionnaire() {
 
   document.getElementById("formTitle").textContent = CONFIG.title;
   document.getElementById("formInstruction").innerHTML = CONFIG.instruction;
-
-  if (CONFIG.enableNprs) {
-    document.getElementById("nprsCard").style.display = "block";
-    document.getElementById("nprsResultBlock").style.display = "block";
-  }
 
   const container = document.getElementById("questionsContainer");
   container.innerHTML = "";
@@ -522,10 +423,6 @@ function initQuestionnaire() {
   });
 }
 
-function updateNprs(val) {
-  document.getElementById("nprsValueDisplay").textContent = `${val} / 10`;
-}
-
 function submitAssessment() {
   const unanswered = [];
   document.querySelectorAll(".question-card").forEach(c => c.classList.remove("highlight-error"));
@@ -575,11 +472,6 @@ function submitAssessment() {
       riskCategory = "Medium Risk (MR)";
       riskClass = "risk-med";
     }
-  }
-
-  if (CONFIG.enableNprs) {
-    const nprsVal = document.getElementById("nprsSlider").value;
-    document.getElementById("modalNprsText").textContent = `${nprsVal} / 10`;
   }
 
   document.getElementById("modalScoreValue").textContent = `${totalScore} / 9`;
